@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <CheckBox
+        android:id="@+id/check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        />
+
+        <TextView
+            android:layout_weight="2"
+            android:id="@+id/itemtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="aiwegywffi"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@android:color/background_dark"
+            android:textSize="16dp"
+          />
+
+        <Button
+            android:id="@+id/star"
+            android:onClick="star"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/star"
+
+            />
+
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/itemdescription"
+        android:layout_width="match_parent"
+        android:layout_height="15dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="45dp"
+        android:layout_marginTop="1dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:text="ejwygfvwUUCUY 2F8EUVJV"
+        android:textSize="13dp"
+        />
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="3dp"
+    >
+
+    <TextView
+        android:id="@+id/itemdate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="45dp"
+        android:layout_marginRight="8dp"
+        android:text="ewgi"
+        android:textColor="@color/my_blue"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=","
+        android:textColor="@color/my_blue"
+        />
+
+    <TextView
+        android:id="@+id/itemtime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="3dp"
+        android:text="emfkio"
+        android:textColor="@color/my_blue"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+
+        />
+
+</LinearLayout>
+
+    <TextView
+        android:id="@+id/itemcategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="45dp"
+        android:layout_marginTop="3dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:text="ejwygfvwUUCUY"
+        android:textSize="13dp"
+        />
+
+
+
+</LinearLayout>

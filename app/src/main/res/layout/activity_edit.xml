@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".EditActivity">
+
+    <EditText
+        android:id="@+id/edittitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="30dp"
+        android:hint="Enter Title"
+
+        />
+
+    <EditText
+        android:id="@+id/editdesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="20dp"
+        android:hint="Enter Description"
+
+        />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:id="@+id/date"
+        android:hint="Select Date"
+        android:layout_marginTop="20dp"
+        android:inputType="none"
+        android:focusableInTouchMode="false"
+        android:focusable="false"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="16dp" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:id="@+id/time"
+        android:hint="Select Time"
+        android:focusableInTouchMode="false"
+        android:focusable="false"
+        android:layout_marginBottom="12dp"
+        android:layout_marginTop="20dp"
+        android:inputType="none"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="16dp" />
+
+
+
+</LinearLayout>
