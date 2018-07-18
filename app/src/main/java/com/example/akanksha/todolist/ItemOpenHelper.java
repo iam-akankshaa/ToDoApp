@@ -33,7 +33,10 @@ public class ItemOpenHelper extends SQLiteOpenHelper {
                 Contract.Item.COLUMN_TITLE  + " TEXT , " +
                 Contract.Item.COLUMN_DESC + " TEXT , " +
                 Contract.Item.COLUMN_DATE + " TEXT , " +
-                Contract.Item.COLUMN_TIME + " TEXT ) ";
+                Contract.Item.COLUMN_TIME + " TEXT , " +
+                Contract.Item.COLUMN_CATEGORY + " TEXT , " +
+                Contract.Item.COLUMN_MARK + " INTEGER , " +
+                Contract.Item.COLUMN_CHECK + " INTEGER )";
 
 
         sqLiteDatabase.execSQL(expensesSql);

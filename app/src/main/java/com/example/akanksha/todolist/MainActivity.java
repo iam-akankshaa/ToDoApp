@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
@@ -53,40 +54,77 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         //inflater= (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE) ;
 
+
+        adapter = new ItemAdapter(this, items, new MarkClickListener() {
+            @Override
+            public void markButtonClicked(Item item, int position) {
+
+                long id= item.getId();
+
+                if(item.getMark() == 0) {
+                    item.setMark(1);
+
+                    ItemOpenHelper openHelper = ItemOpenHelper.getInstance(getApplicationContext());
+                    SQLiteDatabase database = openHelper.getWritableDatabase();
+
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put(Contract.Item.COLUMN_MARK, item.getMark());
+
+                    String[] selectionArgs = {id + ""};
+                    database.update(Contract.Item.TABLE_NAME, contentValues, Contract.Item.COLUMN_ID + " = ? ", selectionArgs);
+                }
+
+                else
+                {
+                    item.setMark(0);
+                    ItemOpenHelper openHelper = ItemOpenHelper.getInstance(getApplicationContext());
+                    SQLiteDatabase database = openHelper.getWritableDatabase();
+
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put(Contract.Item.COLUMN_MARK, item.getMark());
+
+                    String[] selectionArgs = {id + ""};
+                    database.update(Contract.Item.TABLE_NAME, contentValues, Contract.Item.COLUMN_ID + " = ? ", selectionArgs);
+
+                }
+
+                displayUncheck();
+
+            }
+        }, new checkClickListener(){
+
+            public  void checkButtonClicked(Item item, int position){
+
+                long id= item.getId();
+                item.setCheck(1);
+
+                ItemOpenHelper openHelper = ItemOpenHelper.getInstance(getApplicationContext());
+                SQLiteDatabase database = openHelper.getWritableDatabase();
+
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(Contract.Item.COLUMN_CHECK,item.getCheck());
+
+                String[] selectionArgs= {id + ""};
+                database.update(Contract.Item.TABLE_NAME,contentValues,Contract.Item.COLUMN_ID + " = ? ",selectionArgs);
+
+                Toast.makeText(MainActivity.this,"Task Finished",Toast.LENGTH_LONG).show();
+
+                displayUncheck();
+
+            }
+        }
+
+        );
+
+        l.setAdapter(adapter);
+
+
         l.setOnItemClickListener(this);
         l.setOnItemLongClickListener(this);
-       Log.d("Main ACtivity","oncreate");
+        Log.d("Main ACtivity","oncreate");
 
-        displayAll();
-
-/*
-        ItemOpenHelper openHelper = ItemOpenHelper.getInstance(getApplicationContext());
-        SQLiteDatabase database = openHelper.getReadableDatabase();
-        //int amountGreaterThan = 0;
-        //String[] selectionArgument = {amountGreaterThan + "",};
-        String[] columns = {Contract.Item.COLUMN_TITLE,Contract.Item.COLUMN_DESC, Contract.Item.COLUMN_DATE,Contract.Item.COLUMN_TIME,Contract.Item.COLUMN_ID};
-        //Cursor cursor = database.query(Contract.Item.TABLE_NAME,columns, null,null,null,null,null);
-        Cursor cursor = database.rawQuery("select * from " + Contract.Item.TABLE_NAME ,null);
-        while(cursor.moveToNext()){
-            String title = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_TITLE));
-            String desc = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_DESC));
-            String date = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_DATE));
-            String time = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_TIME));
-
-            long id = cursor.getLong(cursor.getColumnIndex(Contract.Item.COLUMN_ID));
-
-            Item expense = new Item(title,desc,date,time);
-            expense.setId(id);
-            items.add(expense);
-
-        }
-        cursor.close();
-
-
-        adapter = new ItemAdapter(this,items);
-
-        l.setAdapter(adapter);*/
-
+        //displayAll();
+        displayUncheck();
 
 
     }
@@ -103,13 +141,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
+        Log.d("Main ACtivity","itemclick");
+
         Bundle bundle= new Bundle();
         Item it=items.get(i);
 
-       /* bundle.putString(TITLE,it.getTitle());
-        bundle.putString(DESCRIPTION,it.getDescription());
-        bundle.putString(DATE,it.getDate());
-        bundle.putString(TIME,it.getTime());*/
         bundle.putLong(ID,it.getId());
         bundle.putLong("code",2);
 
@@ -169,6 +205,38 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         return false;
     }
 
+    public void displayUncheck()
+    {
+        items.clear();
+        ItemOpenHelper openHelper = ItemOpenHelper.getInstance(getApplicationContext());
+        SQLiteDatabase database = openHelper.getReadableDatabase();
+
+        String[] selectionArgument = { 0 + ""};
+        //String[] columns = {Contract.Item.COLUMN_TITLE,Contract.Item.COLUMN_DESC, Contract.Item.COLUMN_DATE,Contract.Item.COLUMN_TIME,Contract.Item.COLUMN_ID};
+
+        Cursor cursor = database.query(Contract.Item.TABLE_NAME, null, Contract.Item.COLUMN_CHECK + " = ? ", selectionArgument, null, null, null, null);
+        while(cursor.moveToNext()){
+
+           String  title = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_TITLE));
+           String desc = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_DESC));
+           String date = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_DATE));
+           String time = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_TIME));
+           String category =cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_CATEGORY));
+           int mark = cursor.getInt(cursor.getColumnIndex(Contract.Item.COLUMN_MARK));
+           int check = cursor.getInt(cursor.getColumnIndex(Contract.Item.COLUMN_CHECK));
+
+            long id = cursor.getLong(cursor.getColumnIndex(Contract.Item.COLUMN_ID));
+
+            Item expense = new Item(title,desc,date,time,category,mark,check);
+            expense.setId(id);
+            items.add(expense);
+
+        }
+        cursor.close();
+        adapter.notifyDataSetChanged();
+
+
+    }
 
     public void displayAll()
     {
@@ -186,20 +254,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             String desc = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_DESC));
             String date = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_DATE));
             String time = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_TIME));
+            String cat= cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_CATEGORY));
+            int mark= cursor.getInt(cursor.getColumnIndex(Contract.Item.COLUMN_MARK));
+            int check = cursor.getInt(cursor.getColumnIndex(Contract.Item.COLUMN_CHECK));
 
             long id = cursor.getLong(cursor.getColumnIndex(Contract.Item.COLUMN_ID));
 
-            Item expense = new Item(title,desc,date,time);
+            Item expense = new Item(title,desc,date,time,cat,mark,check);
             expense.setId(id);
             items.add(expense);
 
         }
         cursor.close();
+        adapter.notifyDataSetChanged();
 
-
-        adapter = new ItemAdapter(this,items);
-
-        l.setAdapter(adapter);
 
     }
 
@@ -229,7 +297,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             if (resultCode == AddActivity.ADD_EXPENSE_RESULT_CODE) {
 
 
-                // displayAll();
+               // displayAll();
+                displayUncheck();
                 Toast.makeText(this, "Task Added", Toast.LENGTH_LONG).show();
 
 
@@ -273,9 +342,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     public  void add(View v)
     {
+        Bundle bundle= new Bundle();
+        bundle.putLong("code",1);
+
         Intent intent = new Intent(this,AddActivity.class);
-        //intent.putExtra("code",1);
-        startActivity(intent);
+        intent.putExtras(bundle);
+        startActivityForResult(intent,ADD_REQUEST_CODE);
+
     }
 
     public boolean onOptionsItemSelected(MenuItem item)
@@ -283,62 +356,112 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         int idmenu =item.getItemId();
 
-        if(idmenu == R.id.add)
+        if(idmenu == R.id.all)
         {
-            Intent intent = new Intent(this,AddActivity.class);
-            //intent.putExtra("code",1);
-            startActivity(intent);
+            displayAll();
+        }
 
-            /*final View output= inflater.inflate(R.layout.alert_layout,l,false);
-            AlertDialog.Builder builder=new AlertDialog.Builder(this);
-            builder.setTitle("Add New ToDo");
-            builder.setMessage("Enter Title and Message");
-            builder.setView(output);
-            builder.setCancelable(false);
-            builder.setPositiveButton("OK",new DialogInterface.OnClickListener() {
+        else if(idmenu == R.id.important)
+        {
+            items.clear();
+            ItemOpenHelper openHelper = ItemOpenHelper.getInstance(getApplicationContext());
+            SQLiteDatabase database = openHelper.getReadableDatabase();
+
+            String[] selectionArgument = {1 + ""};
+            //String[] columns = {Contract.Item.COLUMN_TITLE,Contract.Item.COLUMN_DESC, Contract.Item.COLUMN_DATE,Contract.Item.COLUMN_TIME,Contract.Item.COLUMN_ID};
+
+            Cursor cursor = database.query(Contract.Item.TABLE_NAME, null, Contract.Item.COLUMN_MARK + " = ? ", selectionArgument, null, null, null, null);
+            while(cursor.moveToNext()){
+
+                String  title = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_TITLE));
+                String desc = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_DESC));
+                String date = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_DATE));
+                String time = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_TIME));
+                String category =cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_CATEGORY));
+                int mark = cursor.getInt(cursor.getColumnIndex(Contract.Item.COLUMN_MARK));
+                int check = cursor.getInt(cursor.getColumnIndex(Contract.Item.COLUMN_CHECK));
+
+                long id = cursor.getLong(cursor.getColumnIndex(Contract.Item.COLUMN_ID));
+
+                Item expense = new Item(title,desc,date,time,category,mark,check);
+                expense.setId(id);
+                items.add(expense);
+
+            }
+            cursor.close();
+            adapter.notifyDataSetChanged();
+
+        }
+
+        else if(idmenu == R.id.dflt)
+        {
+            displayCategory("Default");
+        }
+
+        else if(idmenu == R.id.shopping)
+        {
+            displayCategory("Shopping");
+        }
+
+        else if(idmenu == R.id.home)
+        {
+            displayCategory("Home");
+        }
+        else if(idmenu == R.id.personal)
+        {
+            displayCategory("Personal");
+        }
+
+        else if(idmenu == R.id.work)
+        {
+            displayCategory("Work");
+        }
+
+        else if(idmenu == R.id.finished)
+        {
+
+           Intent intent = new Intent(this,finishtaskActivity.class);
+           Bundle bundle = new Bundle();
+           bundle.putInt("code",0);
+           intent.putExtras(bundle);
+           startActivity(intent,bundle);
 
 
+        }
+
+
+       else if(idmenu == R.id.delete)
+        {
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Are You Sure");
+            builder.setMessage("Delete all finished tasks");
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
 
-                    EditText ed1= output.findViewById(R.id.edittitle);
-                    EditText ed2= output.findViewById(R.id.editdesc);
-
-                    String title= ed1.getText().toString();
-                    String Description = ed2.getText().toString();
-
-                    Item item= new Item(title,Description);
-                    items.add(item);
-
-                    adapter=new ItemAdapter(MainActivity.this,items);
-                    l.setAdapter(adapter);
-
+                    Intent intent = new Intent(MainActivity.this,finishtaskActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("code",1);
+                    intent.putExtras(bundle);
+                    startActivity(intent,bundle);
 
                 }
 
             });
 
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    //TODO
+
                 }
-            })
+            });
 
-
-            AlertDialog dialog = builder.create();
-            dialog.show();*/
-
-
+            AlertDialog dialog =builder.create();
+            dialog.show();
 
         }
 
-        if(idmenu == R.id.settings)
-        {
-            Intent intent = new Intent(this,CheckPermission.class);
-            startActivityForResult(intent,2);
-        }
-
-        if(idmenu == R.id.sorttitle)
+        else if(idmenu == R.id.sorttitle)
         {
 
             items.clear();
@@ -352,10 +475,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 String desc = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_DESC));
                 String date = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_DATE));
                 String time = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_TIME));
+                String cat= cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_CATEGORY));
+                int mark= cursor.getInt(cursor.getColumnIndex(Contract.Item.COLUMN_MARK));
+                int check = cursor.getInt(cursor.getColumnIndex(Contract.Item.COLUMN_CHECK));
+
 
                 long id = cursor.getLong(cursor.getColumnIndex(Contract.Item.COLUMN_ID));
 
-                Item expense = new Item(title,desc,date,time);
+                Item expense = new Item(title,desc,date,time,cat,mark,check);
                 expense.setId(id);
                 items.add(expense);
 
@@ -365,7 +492,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         }
 
-        if(idmenu == R.id.sortdesc)
+       else if(idmenu == R.id.sortdesc)
         {
 
             items.clear();
@@ -379,10 +506,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 String desc = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_DESC));
                 String date = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_DATE));
                 String time = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_TIME));
+                String cat= cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_CATEGORY));
+                int mark= cursor.getInt(cursor.getColumnIndex(Contract.Item.COLUMN_MARK));
+                int check = cursor.getInt(cursor.getColumnIndex(Contract.Item.COLUMN_CHECK));
+
 
                 long id = cursor.getLong(cursor.getColumnIndex(Contract.Item.COLUMN_ID));
 
-                Item expense = new Item(title,desc,date,time);
+                Item expense = new Item(title,desc,date,time,cat,mark,check);
                 expense.setId(id);
                 items.add(expense);
 
@@ -391,7 +522,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         }
 
-        if(idmenu == R.id.sortdate)
+       else  if(idmenu == R.id.sortdate)
         {
 
             items.clear();
@@ -405,10 +536,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 String desc = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_DESC));
                 String date = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_DATE));
                 String time = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_TIME));
+                String cat= cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_CATEGORY));
+                int mark= cursor.getInt(cursor.getColumnIndex(Contract.Item.COLUMN_MARK));
+                int check = cursor.getInt(cursor.getColumnIndex(Contract.Item.COLUMN_CHECK));
+
 
                 long id = cursor.getLong(cursor.getColumnIndex(Contract.Item.COLUMN_ID));
 
-                Item expense = new Item(title,desc,date,time);
+                Item expense = new Item(title,desc,date,time,cat,mark,check);
                 expense.setId(id);
                 items.add(expense);
 
@@ -417,35 +552,60 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         }
 
-        if(idmenu == R.id.sorttime)
+        else if(idmenu == R.id.feedback)
         {
 
-            items.clear();
-            ItemOpenHelper openHelper = ItemOpenHelper.getInstance(getApplicationContext());
-            SQLiteDatabase database = openHelper.getReadableDatabase();
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_SENDTO); //Only For Mail
 
-            Cursor cursor = database.query(Contract.Item.TABLE_NAME, null, null, null, null, null, Contract.Item.COLUMN_TIME + " ASC", null);
+            Uri u =Uri.parse("mailto:akankshajain0209@gmail.com");
 
-            while(cursor.moveToNext()){
-                String title = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_TITLE));
-                String desc = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_DESC));
-                String date = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_DATE));
-                String time = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_TIME));
-
-                long id = cursor.getLong(cursor.getColumnIndex(Contract.Item.COLUMN_ID));
-
-                Item expense = new Item(title,desc,date,time);
-                expense.setId(id);
-                items.add(expense);
-
-            }
-            cursor.close();
+            intent.setData(u);
+            startActivity(intent);
 
         }
 
+        else if(idmenu == R.id.settings)
+       {
+          Intent intent = new Intent(this,CheckPermission.class);
+          startActivityForResult(intent,2);
+       }
 
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public  void displayCategory(String cat)
+    {
+        items.clear();
+        ItemOpenHelper openHelper = ItemOpenHelper.getInstance(getApplicationContext());
+        SQLiteDatabase database = openHelper.getReadableDatabase();
+
+        String[] selectionArgument = {cat};
+        //String[] columns = {Contract.Item.COLUMN_TITLE,Contract.Item.COLUMN_DESC, Contract.Item.COLUMN_DATE,Contract.Item.COLUMN_TIME,Contract.Item.COLUMN_ID};
+
+        Cursor cursor = database.query(Contract.Item.TABLE_NAME, null, Contract.Item.COLUMN_CATEGORY + " = ? ", selectionArgument, null, null, null, null);
+        while(cursor.moveToNext()){
+
+            String  title = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_TITLE));
+            String desc = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_DESC));
+            String date = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_DATE));
+            String time = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_TIME));
+            String category =cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_CATEGORY));
+            int mark = cursor.getInt(cursor.getColumnIndex(Contract.Item.COLUMN_MARK));
+            int check = cursor.getInt(cursor.getColumnIndex(Contract.Item.COLUMN_CHECK));
+
+            long id = cursor.getLong(cursor.getColumnIndex(Contract.Item.COLUMN_ID));
+
+            Item expense = new Item(title,desc,date,time,category,mark,check);
+            expense.setId(id);
+            items.add(expense);
+
+        }
+        cursor.close();
+        adapter.notifyDataSetChanged();
+
+
     }
 
 

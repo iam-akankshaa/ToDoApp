@@ -13,14 +13,21 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Adapter;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
-public class EditActivity extends AppCompatActivity {
+public class EditActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
 
     EditText titleEditText,descEditText,dateEditText,timeEditText;
     String titleExpense,descExpense,dateExpense,timeExpense;
@@ -30,8 +37,13 @@ public class EditActivity extends AppCompatActivity {
     String date;
     String title;
     String desc;
+    String category;
+    int mark;
     long id;
     long code;
+    CheckBox checkBox;
+    ArrayList<String> categories;
+    Spinner spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,12 +54,31 @@ public class EditActivity extends AppCompatActivity {
         descEditText = findViewById(R.id.editdesc);
         dateEditText = findViewById(R.id.date);
         timeEditText = findViewById(R.id.time);
+        checkBox =findViewById(R.id.check);
+
 
 
         Intent intent = getIntent();
 
         bundle = intent.getExtras();
         id=bundle.getLong(MainActivity.ID);
+        code = bundle.getLong("code",0);
+
+        spinner=findViewById(R.id.spin);
+        spinner.setOnItemSelectedListener(this);
+
+        categories = new ArrayList<>();
+        categories.add("Default");
+        categories.add("Shopping");
+        categories.add("Home");
+        categories.add("Personal");
+        categories.add("Work");
+
+        ArrayAdapter<String> catadapter = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item,categories);
+
+        spinner.setAdapter(catadapter);
+
+
 
 
        /* if(bundle != null){
@@ -60,8 +91,6 @@ public class EditActivity extends AppCompatActivity {
 
 
         }*/
-
-
 
         ItemOpenHelper openHelper = ItemOpenHelper.getInstance(getApplicationContext());
         SQLiteDatabase database = openHelper.getReadableDatabase();
@@ -76,6 +105,8 @@ public class EditActivity extends AppCompatActivity {
             desc = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_DESC));
             date = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_DATE));
             time = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_TIME));
+            category =cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_CATEGORY));
+            mark = cursor.getInt(cursor.getColumnIndex(Contract.Item.COLUMN_MARK));
 
         }
 
@@ -84,6 +115,12 @@ public class EditActivity extends AppCompatActivity {
         descEditText.setText(desc);
         dateEditText.setText(date);
         timeEditText.setText(time);
+
+        if(mark == 1)
+         checkBox.setEnabled(true);
+        else
+          checkBox.setEnabled(false);
+
 
 
         dateEditText.setOnClickListener(new View.OnClickListener() {
@@ -134,7 +171,15 @@ public class EditActivity extends AppCompatActivity {
                 setResult(EDIT_EXPENSE_RESULT_CODE,intent);
                 finish();*/
 
-                    Item expense = new Item(titleExpense,descExpense,dateExpense,timeExpense);
+                int markvalue;
+
+                if(checkBox.isChecked() == true)
+                    markvalue=1;
+                else
+                    markvalue=0;
+
+
+                Item expense = new Item(titleExpense,descExpense,dateExpense,timeExpense,category,markvalue,0);
                     expense.setId(id);
 
                     ItemOpenHelper openHelper = ItemOpenHelper.getInstance(getApplicationContext());
@@ -145,9 +190,12 @@ public class EditActivity extends AppCompatActivity {
                     contentValues.put(Contract.Item.COLUMN_DESC,expense.getDescription());
                     contentValues.put(Contract.Item.COLUMN_DATE,expense.getDate());
                     contentValues.put(Contract.Item.COLUMN_TIME,expense.getTime());
+                    contentValues.put(Contract.Item.COLUMN_CATEGORY,expense.getCategory());
+                    contentValues.put(Contract.Item.COLUMN_MARK,expense.getMark());
+                    contentValues.put(Contract.Item.COLUMN_CHECK,expense.getCheck());
 
-                String[] selectionArgs= {id + ""};
-                database.update(Contract.Item.TABLE_NAME,contentValues,Contract.Item.COLUMN_ID + " = ?",selectionArgs);
+                   String[] selectionArgs= {id + ""};
+                   database.update(Contract.Item.TABLE_NAME,contentValues,Contract.Item.COLUMN_ID + " = ? ",selectionArgs);
 
 
                 if( !time.equals(timeExpense) || !date.equals(dateExpense) ) {
@@ -214,6 +262,7 @@ public class EditActivity extends AppCompatActivity {
 
                     Intent intent2 = new Intent(this, MainActivity.class);
                     startActivity(intent2);
+                    finish();
 
                 }
 
@@ -315,6 +364,26 @@ public class EditActivity extends AppCompatActivity {
         datePickerDialog.show();
     }
 
+    public  void calendar(View v)
+    {
+        setDate();
+    }
 
+    public  void clock(View v)
+    {
+        setTime();
+    }
 
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+         category= categories.get(i);
+       // textView.setText(c);
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
+    }
 }

@@ -11,26 +11,35 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
-public class AddActivity extends AppCompatActivity {
+public class AddActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
 
     EditText ed1;
     EditText ed2;
     EditText dateEditText,timeEditText;
-    String titleExpense,descExpense,dateExpense,timeExpense;
+    CheckBox checkBox;
+    String titleExpense,descExpense,dateExpense,timeExpense,category;
     Bundle bundle;
-    int code;
+    long code;
     Spinner spinner;
+    ArrayList<String> categories;
+    TextView textView;
 
     public static final int ADD_EXPENSE_RESULT_CODE = 1013;
 
@@ -44,8 +53,24 @@ public class AddActivity extends AppCompatActivity {
         ed2=(EditText) findViewById(R.id.editdesc);
         dateEditText = (EditText) findViewById(R.id.date);
         timeEditText = (EditText) findViewById(R.id.time);
+        //textView=findViewById(R.id.category);
+        checkBox=findViewById(R.id.check);
         spinner=findViewById(R.id.spin);
-       // spinner.setOnItemClickListener();
+        spinner.setOnItemSelectedListener(this);
+        spinner.setSelection(1);
+
+        //textView.setText("DEFAULT");
+        categories = new ArrayList<>();
+
+        categories.add("Default");
+        categories.add("Shopping");
+        categories.add("Home");
+        categories.add("Personal");
+        categories.add("Work");
+
+        ArrayAdapter<String> catadapter = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item,categories);
+
+        spinner.setAdapter(catadapter);
 
 
        /* ed1.setText(MyReceiver.senderNum);
@@ -61,7 +86,7 @@ public class AddActivity extends AppCompatActivity {
            ed2.setText(desc);
 
        //}
-         code=intent.getIntExtra("code",0);
+         code=intent.getLongExtra("code",0);
 
         dateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,6 +104,8 @@ public class AddActivity extends AppCompatActivity {
                 setTime(timeEditText);
             }
         });
+
+
 
 
     }
@@ -141,13 +168,17 @@ public class AddActivity extends AppCompatActivity {
 
         if (item.getItemId() == R.id.add) {
 
-
-            // public void save(View v) {
-
             if (validateFields()) {
 
+                int markvalue;
 
-                Item expense = new Item(titleExpense, descExpense, dateExpense, timeExpense);
+                if(checkBox.isChecked() == true)
+                    markvalue=1;
+                else
+                    markvalue=0;
+
+
+                Item expense = new Item(titleExpense, descExpense, dateExpense, timeExpense,category,markvalue,0);
 
                 ItemOpenHelper openHelper = ItemOpenHelper.getInstance(getApplicationContext());
                 SQLiteDatabase database = openHelper.getWritableDatabase();
@@ -157,6 +188,9 @@ public class AddActivity extends AppCompatActivity {
                 contentValues.put(Contract.Item.COLUMN_DESC, expense.getDescription());
                 contentValues.put(Contract.Item.COLUMN_DATE, expense.getDate());
                 contentValues.put(Contract.Item.COLUMN_TIME, expense.getTime());
+                contentValues.put(Contract.Item.COLUMN_CATEGORY,expense.getCategory());
+                contentValues.put(Contract.Item.COLUMN_MARK,expense.getMark());
+                contentValues.put(Contract.Item.COLUMN_CHECK,expense.getCheck());
 
                 long id = database.insert(Contract.Item.TABLE_NAME, null, contentValues);
                /* if (id > -1L){
@@ -200,11 +234,35 @@ public class AddActivity extends AppCompatActivity {
                 alarmManager.set(AlarmManager.RTC_WAKEUP, l, pendingIntent);
 
 
-                Intent intent1 = new Intent(this, MainActivity.class);
-                startActivity(intent1);
+
+                if(code == 1) {
+
+                    Intent data = new Intent();
+
+                    Bundle bundle1 = new Bundle();
+
+                /*bundle.putString(MainActivity.TITLE, titleExpense);
+                bundle.putString(MainActivity.DESCRIPTION, descExpense);
+                bundle.putString(MainActivity.DATE, dateExpense);
+                bundle.putString(MainActivity.TIME, timeExpense);*/
+                    bundle1.putLong(MainActivity.ID,id);
+                    data.putExtras(bundle1);
+
+                    setResult(ADD_EXPENSE_RESULT_CODE,data);
+                    finish();
+
+                }
+                else{
+
+                    Intent intent1 = new Intent(this, MainActivity.class);
+                    startActivity(intent1);
+                    finish();
+                }
 
 
-            } else {
+
+            }
+            else {
 
                 Toast.makeText(AddActivity.this, "Incomplete details", Toast.LENGTH_SHORT).show();
             }
@@ -291,6 +349,30 @@ public class AddActivity extends AppCompatActivity {
         },year,month,day);
 
         datePickerDialog.show();
+    }
+
+    public  void calendar(View v)
+    {
+        setDate(v);
+    }
+
+    public void clock(View v)
+    {
+        setTime(v);
+    }
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+       category= categories.get(i);
+        //textView.setText(c);
+
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
+
     }
 
 }

@@ -8,15 +8,18 @@ public class Item {
     private String date;
     private String time;
     private String category;
-    private boolean mark;
-    private boolean check;
+    private int mark;
+    private int check;
 
-    public Item(String title,String  description,String date,String time) {
+    public Item(String title,String  description,String date,String time,String category,int mark ,int check) {
 
         this.title = title;
         this.description= description;
         this.date=date;
         this.time=time;
+        this.category=category;
+        this.mark=mark;
+        this.check=check;
     }
 
 
@@ -68,20 +71,19 @@ public class Item {
         this.category = category;
     }
 
-    public boolean isMark() {
+    public int getMark() {
         return mark;
     }
 
-    public void setMark(boolean mark) {
+    public void setMark(int mark) {
         this.mark = mark;
     }
 
-    public boolean isCheck() {
+    public int getCheck() {
         return check;
     }
 
-    public void setCheck(boolean check) {
+    public void setCheck(int check) {
         this.check = check;
     }
-
 }

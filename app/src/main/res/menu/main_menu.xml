@@ -2,9 +2,35 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <item
+
+        android:title="show"
+        android:icon="@drawable/add"
+        app:showAsAction="ifRoom">
+
+        <menu>
+
+            <item android:id="@+id/all"  android:title="All"/>
+            <item android:id="@+id/important" android:title="Important"/>
+
+            <item android:id="@+id/dflt" android:title="Default"/>
+            <item android:id="@+id/shopping" android:title="Shopping"/>
+            <item android:id="@+id/home" android:title="Home"/>
+            <item android:id="@+id/personal" android:title="Personal"/>
+            <item android:id="@+id/work" android:title="Work"/>
+
+            <item android:id="@+id/finished" android:title="Finished"/>
+
+
+        </menu>
+
+    </item>
+
+    <item android:id="@+id/delete"
+          android:title="Delete All Finished Tasks"/>
 
     <item  android:id="@+id/Sort"
-           android:title="Sort By">
+           android:title="Sort">
 
         <menu>
 
@@ -17,18 +43,17 @@
         <item  android:id="@+id/sortdate"
                android:title="Date"/>
 
-        <item android:id="@+id/sorttime"
-              android:title="Time"/>
-
-        <item android:id="@+id/sortcategory"
-               android:title="Category"/>
-
         </menu>
 
     </item>
 
     <item
+            android:id="@+id/feedback"
+            android:title="Feedback"/>
+
+    <item
           android:id="@+id/settings"
           android:title="Settings"/>
+
 
 </menu>

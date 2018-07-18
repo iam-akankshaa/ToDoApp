@@ -12,23 +12,20 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class ItemAdapter extends ArrayAdapter{
+public class FinishtaskAdapter extends ArrayAdapter{
 
     ArrayList<Item> item;
     LayoutInflater inflater;
     private TextView findViewByID;
-    MarkClickListener listener;
-    checkClickListener clickListener;
 
-    public ItemAdapter(@NonNull Context context, ArrayList<Item> items,MarkClickListener listener , checkClickListener clickListener){
+
+    public FinishtaskAdapter(@NonNull Context context, ArrayList<Item> items){
 
         super(context,0,items);
 
         inflater=(LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
 
         this.item=items;
-        this.listener=listener;
-        this.clickListener=clickListener;
 
     }
 
@@ -64,29 +61,8 @@ public class ItemAdapter extends ArrayAdapter{
             button.setBackground(getContext().getResources().getDrawable(R.drawable.starmark2));
 
 
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                listener.markButtonClicked(i,position);
-
-            }
-        });
-
-        checkBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-              clickListener.checkButtonClicked(i,position);
-
-            }
-
-        });
-
-         return  output;
+        return  output;
 
     }
-
-
 
 }

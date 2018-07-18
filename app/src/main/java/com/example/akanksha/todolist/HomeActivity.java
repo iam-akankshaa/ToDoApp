@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 public class HomeActivity extends AppCompatActivity {
@@ -17,6 +18,7 @@ public class HomeActivity extends AppCompatActivity {
     TextView tv2;
     TextView tv3;
     TextView tv4;
+    TextView tv5;
     Bundle bundle;
     public static final int DETAILS_REQUEST_CODE = 22;
     public static final int DETAILS_RESULT_CODE = 1012;
@@ -25,6 +27,7 @@ public class HomeActivity extends AppCompatActivity {
     String desc;
     String date;
     String time;
+    String category;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +38,7 @@ public class HomeActivity extends AppCompatActivity {
         tv2=findViewById(R.id.desc);
         tv3=findViewById(R.id.date);
         tv4=findViewById(R.id.time);
+        tv5=findViewById(R.id.category);
 
         Intent intent = getIntent();
 
@@ -65,6 +69,7 @@ public class HomeActivity extends AppCompatActivity {
             desc = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_DESC));
             date = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_DATE));
             time = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_TIME));
+            category = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_CATEGORY));
 
         }
 
@@ -73,7 +78,7 @@ public class HomeActivity extends AppCompatActivity {
         tv2.setText(desc);
         tv3.setText(date);
         tv4.setText(time);
-
+        tv5.setText(category);
 
 
     }
@@ -111,6 +116,7 @@ public class HomeActivity extends AppCompatActivity {
                         desc = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_DESC));
                         date = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_DATE));
                         time = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_TIME));
+                        category= cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_CATEGORY));
 
                     }
 
@@ -119,6 +125,7 @@ public class HomeActivity extends AppCompatActivity {
                     tv2.setText(desc);
                     tv3.setText(date);
                     tv4.setText(time);
+                    tv5.setText(category);
 
                     setResult(DETAILS_RESULT_CODE,data);
                     finish();
@@ -129,27 +136,13 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public  void edit(View v)
+    {
 
-        getMenuInflater().inflate(R.menu.home_menu,menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        if(item.getItemId() == R.id.edit){
-
-            Intent  intent = new Intent(this,EditActivity.class);
-            intent.putExtras(bundle);
-            startActivityForResult(intent,DETAILS_REQUEST_CODE);
-
-        }
-
-        return true;
+        Intent  intent = new Intent(this,EditActivity.class);
+        intent.putExtras(bundle);
+        startActivityForResult(intent,DETAILS_REQUEST_CODE);
 
     }
-
 
 }

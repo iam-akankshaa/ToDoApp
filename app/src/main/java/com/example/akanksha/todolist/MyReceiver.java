@@ -113,7 +113,7 @@ public class MyReceiver extends BroadcastReceiver {
         String date=data.getStringExtra(DATE);
         String time= data.getStringExtra(TIME);
         //int amount = Integer.parseInt(amountString);*/
-        Item expense = new Item(senderNum, message, date, time);
+        Item expense = new Item(senderNum, message, date, time,"DEFAULT",0,0);
 
         ItemOpenHelper openHelper = ItemOpenHelper.getInstance(context);
         SQLiteDatabase database = openHelper.getWritableDatabase();
@@ -123,6 +123,9 @@ public class MyReceiver extends BroadcastReceiver {
         contentValues.put(Contract.Item.COLUMN_DESC, expense.getDescription());
         contentValues.put(Contract.Item.COLUMN_DATE, expense.getDate());
         contentValues.put(Contract.Item.COLUMN_TIME, expense.getTime());
+        contentValues.put(Contract.Item.COLUMN_CATEGORY,expense.getCategory());
+        contentValues.put(Contract.Item.COLUMN_MARK,expense.getMark());
+        contentValues.put(Contract.Item.COLUMN_CHECK,expense.getCheck());
 
         long id=database.insert(Contract.Item.TABLE_NAME, null, contentValues);
         /*if (id > -1L) {
