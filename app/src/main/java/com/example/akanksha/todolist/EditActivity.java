@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,12 +45,18 @@ public class EditActivity extends AppCompatActivity implements AdapterView.OnIte
     CheckBox checkBox;
     ArrayList<String> categories;
     Spinner spinner;
+    int catselected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
 
+       /* Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar3);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+*/
         titleEditText = findViewById(R.id.edittitle);
         descEditText = findViewById(R.id.editdesc);
         dateEditText = findViewById(R.id.date);
@@ -77,7 +84,6 @@ public class EditActivity extends AppCompatActivity implements AdapterView.OnIte
         ArrayAdapter<String> catadapter = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item,categories);
 
         spinner.setAdapter(catadapter);
-
 
 
 
@@ -116,10 +122,24 @@ public class EditActivity extends AppCompatActivity implements AdapterView.OnIte
         dateEditText.setText(date);
         timeEditText.setText(time);
 
+        if(category.equals("Default"))
+            catselected=0;
+        else if(category.equals("Shopping"))
+            catselected=1;
+        else if(category.equals("Home"))
+            catselected=2;
+        else if(category.equals("Personal"))
+            catselected=3;
+        else if(category.equals("Work"))
+            catselected=4;
+
+
+        spinner.setSelection(catselected);
+
         if(mark == 1)
-         checkBox.setEnabled(true);
+         checkBox.setChecked(true);
         else
-          checkBox.setEnabled(false);
+          checkBox.setChecked(false);
 
 
 

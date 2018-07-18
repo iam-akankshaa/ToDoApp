@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class HomeActivity extends AppCompatActivity {
@@ -19,6 +20,7 @@ public class HomeActivity extends AppCompatActivity {
     TextView tv3;
     TextView tv4;
     TextView tv5;
+    Button b;
     Bundle bundle;
     public static final int DETAILS_REQUEST_CODE = 22;
     public static final int DETAILS_RESULT_CODE = 1012;
@@ -28,6 +30,7 @@ public class HomeActivity extends AppCompatActivity {
     String date;
     String time;
     String category;
+    int mark;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +42,7 @@ public class HomeActivity extends AppCompatActivity {
         tv3=findViewById(R.id.date);
         tv4=findViewById(R.id.time);
         tv5=findViewById(R.id.category);
+        b=findViewById(R.id.star);
 
         Intent intent = getIntent();
 
@@ -70,6 +74,7 @@ public class HomeActivity extends AppCompatActivity {
             date = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_DATE));
             time = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_TIME));
             category = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_CATEGORY));
+            mark= cursor.getInt(cursor.getColumnIndex(Contract.Item.COLUMN_MARK));
 
         }
 
@@ -79,6 +84,10 @@ public class HomeActivity extends AppCompatActivity {
         tv3.setText(date);
         tv4.setText(time);
         tv5.setText(category);
+
+        if(mark == 1)
+            b.setBackground(this.getResources().getDrawable(R.drawable.starblue));
+
 
 
     }

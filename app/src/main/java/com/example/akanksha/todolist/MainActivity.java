@@ -14,6 +14,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,6 +22,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -44,13 +47,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public static final int ADD_REQUEST_CODE = 100;
     public static final int DETAILS_REQUEST_CODE = 1011;
 
+    FrameLayout rootlayout;
+    LinearLayout initialayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         l=findViewById(R.id.list);
         items=new ArrayList<>();
+        rootlayout=findViewById(R.id.root);
 
         //inflater= (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE) ;
 
@@ -90,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                 displayUncheck();
 
+
             }
         }, new checkClickListener(){
 
@@ -111,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                 displayUncheck();
 
+
             }
         }
 
@@ -125,6 +135,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         //displayAll();
         displayUncheck();
+
 
 
     }
@@ -178,6 +189,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 database.delete(Contract.Item.TABLE_NAME,Contract.Item.COLUMN_ID + " = ?",selectionArgs);
                 items.remove(position);
                 adapter.notifyDataSetChanged();
+                checkdb(items);
 
                 int rcode=(int) id;
 
@@ -186,6 +198,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 Intent intent = new Intent(MainActivity.this,NotificationReve.class);
                 PendingIntent pendingIntent =  PendingIntent.getBroadcast(MainActivity.this,rcode,intent,0);
                 alarmManager.cancel(pendingIntent);
+                checkdb(items);
 
 
             }
@@ -208,6 +221,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void displayUncheck()
     {
         items.clear();
+
+        if (rootlayout.indexOfChild(initialayout) > -1) {
+            // Remove initial layout if it's previously added
+            rootlayout.removeView(initialayout);
+        }
         ItemOpenHelper openHelper = ItemOpenHelper.getInstance(getApplicationContext());
         SQLiteDatabase database = openHelper.getReadableDatabase();
 
@@ -235,6 +253,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         cursor.close();
         adapter.notifyDataSetChanged();
 
+        checkdb(items);
+
 
     }
 
@@ -242,6 +262,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     {
 
         items.clear();
+
+        if (rootlayout.indexOfChild(initialayout) > -1) {
+            // Remove initial layout if it's previously added
+            rootlayout.removeView(initialayout);
+        }
         ItemOpenHelper openHelper = ItemOpenHelper.getInstance(getApplicationContext());
         SQLiteDatabase database = openHelper.getReadableDatabase();
         //int amountGreaterThan = 0;
@@ -268,9 +293,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         cursor.close();
         adapter.notifyDataSetChanged();
 
-
+        checkdb(items);
     }
 
+    public void checkdb(ArrayList<Item> items)
+    {
+        if(items.isEmpty())
+        {
+            LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
+            initialayout = (LinearLayout) inflater.inflate(R.layout.initial_layout,rootlayout,false);
+            rootlayout.addView(initialayout);
+        }
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -299,6 +333,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                // displayAll();
                 displayUncheck();
+                checkdb(items);
                 Toast.makeText(this, "Task Added", Toast.LENGTH_LONG).show();
 
 
@@ -327,7 +362,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     expense.setId(id*/
 
 
-                        displayAll();
+                       // displayAll();
+                        displayUncheck();
+                        //checkdb(items);
 
 
                     }
@@ -364,6 +401,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         else if(idmenu == R.id.important)
         {
             items.clear();
+            if (rootlayout.indexOfChild(initialayout) > -1) {
+                // Remove initial layout if it's previously added
+                rootlayout.removeView(initialayout);
+            }
             ItemOpenHelper openHelper = ItemOpenHelper.getInstance(getApplicationContext());
             SQLiteDatabase database = openHelper.getReadableDatabase();
 
@@ -390,12 +431,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
             cursor.close();
             adapter.notifyDataSetChanged();
+            checkdb(items);
 
         }
 
         else if(idmenu == R.id.dflt)
         {
-            displayCategory("Default");
+            displayCategory("defltcat");
         }
 
         else if(idmenu == R.id.shopping)
@@ -465,6 +507,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         {
 
             items.clear();
+            if (rootlayout.indexOfChild(initialayout) > -1) {
+                // Remove initial layout if it's previously added
+                rootlayout.removeView(initialayout);
+            }
             ItemOpenHelper openHelper = ItemOpenHelper.getInstance(getApplicationContext());
             SQLiteDatabase database = openHelper.getReadableDatabase();
 
@@ -488,6 +534,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             }
             cursor.close();
+            //checkdb(items);
 
 
         }
@@ -496,6 +543,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         {
 
             items.clear();
+            if (rootlayout.indexOfChild(initialayout) > -1) {
+                // Remove initial layout if it's previously added
+                rootlayout.removeView(initialayout);
+            }
             ItemOpenHelper openHelper = ItemOpenHelper.getInstance(getApplicationContext());
             SQLiteDatabase database = openHelper.getReadableDatabase();
 
@@ -519,6 +570,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             }
             cursor.close();
+            //checkdb(items);
 
         }
 
@@ -526,6 +578,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         {
 
             items.clear();
+            if (rootlayout.indexOfChild(initialayout) > -1) {
+                // Remove initial layout if it's previously added
+                rootlayout.removeView(initialayout);
+            }
             ItemOpenHelper openHelper = ItemOpenHelper.getInstance(getApplicationContext());
             SQLiteDatabase database = openHelper.getReadableDatabase();
 
@@ -549,6 +605,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             }
             cursor.close();
+            //checkdb(items);
 
         }
 
@@ -565,6 +622,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         }
 
+        else if(idmenu == R.id.about)
+        {
+            Intent intent = new Intent(this,About.class);
+            startActivity(intent);
+        }
+
+
         else if(idmenu == R.id.settings)
        {
           Intent intent = new Intent(this,CheckPermission.class);
@@ -578,6 +642,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public  void displayCategory(String cat)
     {
         items.clear();
+        if (rootlayout.indexOfChild(initialayout) > -1) {
+            // Remove initial layout if it's previously added
+            rootlayout.removeView(initialayout);
+        }
         ItemOpenHelper openHelper = ItemOpenHelper.getInstance(getApplicationContext());
         SQLiteDatabase database = openHelper.getReadableDatabase();
 
@@ -605,7 +673,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         cursor.close();
         adapter.notifyDataSetChanged();
 
-
+        checkdb(items);
     }
 
 

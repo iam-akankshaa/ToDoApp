@@ -5,21 +5,21 @@
     <item
 
         android:title="show"
-        android:icon="@drawable/add"
+        android:icon="@drawable/secondmenu"
         app:showAsAction="ifRoom">
 
         <menu>
 
-            <item android:id="@+id/all"  android:title="All"/>
-            <item android:id="@+id/important" android:title="Important"/>
+            <item android:id="@+id/all"   android:icon="@drawable/alltask" app:showAsAction="always"/>
+            <item android:id="@+id/important" android:icon="@drawable/starblue" app:showAsAction="always"/>
 
-            <item android:id="@+id/dflt" android:title="Default"/>
-            <item android:id="@+id/shopping" android:title="Shopping"/>
-            <item android:id="@+id/home" android:title="Home"/>
-            <item android:id="@+id/personal" android:title="Personal"/>
-            <item android:id="@+id/work" android:title="Work"/>
+            <item android:id="@+id/dflt" android:icon="@drawable/defltcat"  app:showAsAction="always"/>
+            <item android:id="@+id/shopping"  android:icon="@drawable/shopping" app:showAsAction="always"/>
+            <item android:id="@+id/home"  android:icon="@drawable/home" app:showAsAction="always"/>
+            <item android:id="@+id/personal"  android:icon="@drawable/personal" app:showAsAction="always"/>
+            <item android:id="@+id/work" android:icon="@drawable/work" app:showAsAction="always"/>
 
-            <item android:id="@+id/finished" android:title="Finished"/>
+            <item android:id="@+id/finished"  android:icon="@drawable/finish" app:showAsAction="always"/>
 
 
         </menu>
@@ -50,6 +50,9 @@
     <item
             android:id="@+id/feedback"
             android:title="Feedback"/>
+    <item
+        android:id="@+id/about"
+        android:title="About"/>
 
     <item
           android:id="@+id/settings"

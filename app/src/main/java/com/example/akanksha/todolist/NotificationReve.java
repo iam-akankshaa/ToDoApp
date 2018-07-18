@@ -71,14 +71,23 @@ public class NotificationReve extends BroadcastReceiver {
         builder.setContentTitle(title);
         builder.setContentText(desc);
 
-        builder.setSmallIcon(R.drawable.todoo);
-        builder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(),R.drawable.todoo));
+        //builder.setSmallIcon(R.drawable.todoicon);
+        builder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(),R.drawable.todoicon));
 
         builder.setStyle(new NotificationCompat.BigTextStyle().bigText(desc));
         builder.setGroup(GROUP_KEY);
-        //builder.setAutoCancel(true);
+        builder.setGroupSummary(true);
+        builder.setAutoCancel(true);
         builder.setVibrate(new long[]{250,250,250,250});
-        builder.setColor(context.getResources().getColor(R.color.colorPrimaryDark));
+        //builder.setColor(context.getResources().getColor(R.color.colorPrimaryDark));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder.setSmallIcon(R.drawable.todoicon);
+            builder.setColor(context.getResources().getColor(R.color.colorPrimaryDark));
+        } else {
+            builder.setSmallIcon(R.drawable.todoicon);
+
+        }
 
 
         Intent intent1 = new Intent(context,HomeActivity.class);

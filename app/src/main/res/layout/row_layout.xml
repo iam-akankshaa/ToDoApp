@@ -14,6 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
+        android:focusable="false"
         />
 
         <TextView
@@ -24,8 +25,9 @@
             android:layout_marginStart="8dp"
             android:text="aiwegywffi"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@android:color/background_dark"
+            android:textColor="#000000"
             android:textSize="16dp"
+            android:textStyle="bold"
           />
 
         <Button
@@ -36,6 +38,8 @@
             android:layout_marginEnd="5dp"
             android:layout_marginTop="5dp"
             android:background="@drawable/star"
+            android:focusable="false"
+
 
             />
 
@@ -54,6 +58,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:text="ejwygfvwUUCUY 2F8EUVJV"
         android:textSize="13dp"
+        android:textColor="#000000"
         />
 
 <LinearLayout
@@ -71,6 +76,7 @@
         android:text="ewgi"
         android:textColor="@color/my_blue"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textStyle="bold"
 
         />
 
@@ -91,6 +97,7 @@
         android:layout_marginStart="3dp"
         android:text="emfkio"
         android:textColor="@color/my_blue"
+        android:textStyle="bold"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
 
         />
@@ -109,6 +116,8 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:text="ejwygfvwUUCUY"
         android:textSize="13dp"
+        android:textStyle="bold"
+        android:textColor="#191970"
         />
 
 

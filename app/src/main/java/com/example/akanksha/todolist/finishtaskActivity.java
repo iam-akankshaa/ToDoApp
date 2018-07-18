@@ -1,18 +1,24 @@
 package com.example.akanksha.todolist;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class finishtaskActivity extends AppCompatActivity {
+public class finishtaskActivity extends AppCompatActivity implements  AdapterView.OnItemLongClickListener{
 
     ListView l;
     ArrayList<Item> items;
@@ -73,6 +79,56 @@ public class finishtaskActivity extends AppCompatActivity {
         }
 
 
+    }
+
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+        final Item expense = items.get(i);
+        final int position =i;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(finishtaskActivity.this);
+        builder.setTitle("Delete Item");
+        builder.setMessage("Do You Really Want To Delete");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+                ItemOpenHelper openHelper = ItemOpenHelper.getInstance(getApplicationContext());
+                SQLiteDatabase database = openHelper.getWritableDatabase();
+
+                long id = expense.getId();
+                String[] selectionArgs = {id + ""};
+
+                database.delete(Contract.Item.TABLE_NAME,Contract.Item.COLUMN_ID + " = ?",selectionArgs);
+                items.remove(position);
+                adapter.notifyDataSetChanged();
+
+                int rcode=(int) id;
+
+                AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+                Intent intent = new Intent(finishtaskActivity.this,NotificationReve.class);
+                PendingIntent pendingIntent =  PendingIntent.getBroadcast(finishtaskActivity.this,rcode,intent,0);
+                alarmManager.cancel(pendingIntent);
+
+
+            }
+
+        });
+
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+
+        AlertDialog dialog =builder.create();
+        dialog.show();
+
+        return false;
     }
 
 
