@@ -241,10 +241,7 @@ public class AddActivity extends AppCompatActivity implements AdapterView.OnItem
 
                     Bundle bundle1 = new Bundle();
 
-                /*bundle.putString(MainActivity.TITLE, titleExpense);
-                bundle.putString(MainActivity.DESCRIPTION, descExpense);
-                bundle.putString(MainActivity.DATE, dateExpense);
-                bundle.putString(MainActivity.TIME, timeExpense);*/
+
                     bundle1.putLong(MainActivity.ID,id);
                     data.putExtras(bundle1);
 

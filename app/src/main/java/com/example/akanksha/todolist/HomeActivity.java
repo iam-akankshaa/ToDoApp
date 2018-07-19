@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -24,6 +25,8 @@ public class HomeActivity extends AppCompatActivity {
     Bundle bundle;
     public static final int DETAILS_REQUEST_CODE = 22;
     public static final int DETAILS_RESULT_CODE = 1012;
+    public static final int DETAILS_RESULT_NOT_CHANGE_CODE = 1018;
+
 
     String title;
     String desc;
@@ -102,14 +105,14 @@ public class HomeActivity extends AppCompatActivity {
                 bundle = data.getExtras();
                 long id=bundle.getLong(MainActivity.ID);
 
+                //Toast.makeText(this, "activity on result called", Toast.LENGTH_SHORT).show();
+
                /* if (bundle != null) {
 
                     String title = bundle.getString(MainActivity.TITLE);
                     String desc = bundle.getString(MainActivity.DESCRIPTION);
                     String time = bundle.getString(MainActivity.TIME);
                     String date = bundle.getString(MainActivity.DATE);*/
-
-
 
 
                     ItemOpenHelper openHelper = ItemOpenHelper.getInstance(getApplicationContext());
@@ -141,6 +144,53 @@ public class HomeActivity extends AppCompatActivity {
 
                 }
 
+        }
+
+
+        if(requestCode == DETAILS_REQUEST_CODE && resultCode == EditActivity.EDIT_EXPENSE_NOT_CHANGE_RESULT_CODE) {
+
+            if (data != null) {
+                bundle = data.getExtras();
+                long id = bundle.getLong(MainActivity.ID);
+
+                //Toast.makeText(this, "activity on result called", Toast.LENGTH_SHORT).show();
+
+               /* if (bundle != null) {
+
+                    String title = bundle.getString(MainActivity.TITLE);
+                    String desc = bundle.getString(MainActivity.DESCRIPTION);
+                    String time = bundle.getString(MainActivity.TIME);
+                    String date = bundle.getString(MainActivity.DATE);*/
+
+
+                ItemOpenHelper openHelper = ItemOpenHelper.getInstance(getApplicationContext());
+                SQLiteDatabase database = openHelper.getReadableDatabase();
+
+                String[] selectionArgument = {id + ""};
+                //String[] columns = {Contract.Item.COLUMN_TITLE,Contract.Item.COLUMN_DESC, Contract.Item.COLUMN_DATE,Contract.Item.COLUMN_TIME,Contract.Item.COLUMN_ID};
+
+                Cursor cursor = database.query(Contract.Item.TABLE_NAME, null, Contract.Item.COLUMN_ID + " = ? ", selectionArgument, null, null, null, null);
+                while (cursor.moveToNext()) {
+
+                    title = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_TITLE));
+                    desc = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_DESC));
+                    date = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_DATE));
+                    time = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_TIME));
+                    category = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_CATEGORY));
+
+                }
+
+
+                tv1.setText(title);
+                tv2.setText(desc);
+                tv3.setText(date);
+                tv4.setText(time);
+                tv5.setText(category);
+
+                setResult(DETAILS_RESULT_NOT_CHANGE_CODE, data);
+                finish();
+
+            }
         }
 
     }

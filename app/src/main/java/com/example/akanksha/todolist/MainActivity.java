@@ -46,6 +46,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     public static final int ADD_REQUEST_CODE = 100;
     public static final int DETAILS_REQUEST_CODE = 1011;
+    public static final int FINISH_REQUEST_CODE = 101;
+
 
     FrameLayout rootlayout;
     LinearLayout initialayout;
@@ -136,6 +138,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //displayAll();
         displayUncheck();
 
+        //Toast.makeText(MainActivity.this,"oncreate",Toast.LENGTH_LONG).show();
+
 
 
     }
@@ -188,7 +192,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                 database.delete(Contract.Item.TABLE_NAME,Contract.Item.COLUMN_ID + " = ?",selectionArgs);
                 items.remove(position);
+
                 adapter.notifyDataSetChanged();
+                Toast.makeText(MainActivity.this,"Task Deleted",Toast.LENGTH_LONG).show();
                 checkdb(items);
 
                 int rcode=(int) id;
@@ -198,7 +204,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 Intent intent = new Intent(MainActivity.this,NotificationReve.class);
                 PendingIntent pendingIntent =  PendingIntent.getBroadcast(MainActivity.this,rcode,intent,0);
                 alarmManager.cancel(pendingIntent);
-                checkdb(items);
+
 
 
             }
@@ -330,17 +336,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             if (resultCode == AddActivity.ADD_EXPENSE_RESULT_CODE) {
 
-
                // displayAll();
                 displayUncheck();
-                checkdb(items);
+
                 Toast.makeText(this, "Task Added", Toast.LENGTH_LONG).show();
+                // TO Display Toast Need to do Start Activity For result
 
 
             }
 
         }
-
 
             if (requestCode == DETAILS_REQUEST_CODE && resultCode == HomeActivity.DETAILS_RESULT_CODE) {
 
@@ -352,19 +357,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                     if (bundle != null) {
 
-                   /* String title = bundle.getString(MainActivity.TITLE);
-                    String desc = bundle.getString(MainActivity.DESCRIPTION);
-                    String time = bundle.getString(MainActivity.TIME);
-                    String date = bundle.getString(MainActivity.DATE);
-                    long id=bundle.getLong(MainActivity.ID);
-
-                    Item expense = new Item(title,desc,date,time);
-                    expense.setId(id*/
-
-
-                       // displayAll();
+                        Toast.makeText(this, "Task Saved", Toast.LENGTH_SHORT).show();
                         displayUncheck();
-                        //checkdb(items);
 
 
                     }
@@ -373,6 +367,35 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
 
 
+        if (requestCode == DETAILS_REQUEST_CODE && resultCode == HomeActivity.DETAILS_RESULT_NOT_CHANGE_CODE) {
+
+            Bundle bundle;
+
+            if (data != null) {
+
+                bundle = data.getExtras();
+
+                if (bundle != null) {
+
+                    Toast.makeText(this, "Task Not Modified", Toast.LENGTH_SHORT).show();
+                    displayUncheck();
+
+
+                }
+            }
+
+        }
+
+        if (requestCode == FINISH_REQUEST_CODE) {
+
+            if (resultCode == finishtaskActivity.FINISH_RESULT_CODE) {
+
+                displayUncheck();
+
+
+            }
+
+        }
 
 
     }
@@ -437,7 +460,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         else if(idmenu == R.id.dflt)
         {
-            displayCategory("defltcat");
+            displayCategory("Default");
         }
 
         else if(idmenu == R.id.shopping)
@@ -466,7 +489,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
            Bundle bundle = new Bundle();
            bundle.putInt("code",0);
            intent.putExtras(bundle);
-           startActivity(intent,bundle);
+           startActivityForResult(intent,FINISH_REQUEST_CODE);
 
 
         }
@@ -485,7 +508,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     Bundle bundle = new Bundle();
                     bundle.putInt("code",1);
                     intent.putExtras(bundle);
-                    startActivity(intent,bundle);
+                    startActivityForResult(intent,FINISH_REQUEST_CODE);
 
                 }
 
@@ -506,106 +529,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         else if(idmenu == R.id.sorttitle)
         {
 
-            items.clear();
-            if (rootlayout.indexOfChild(initialayout) > -1) {
-                // Remove initial layout if it's previously added
-                rootlayout.removeView(initialayout);
-            }
-            ItemOpenHelper openHelper = ItemOpenHelper.getInstance(getApplicationContext());
-            SQLiteDatabase database = openHelper.getReadableDatabase();
-
-            Cursor cursor = database.query(Contract.Item.TABLE_NAME, null, null, null, null, null, Contract.Item.COLUMN_TITLE + " ASC", null);
-
-            while(cursor.moveToNext()){
-                String title = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_TITLE));
-                String desc = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_DESC));
-                String date = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_DATE));
-                String time = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_TIME));
-                String cat= cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_CATEGORY));
-                int mark= cursor.getInt(cursor.getColumnIndex(Contract.Item.COLUMN_MARK));
-                int check = cursor.getInt(cursor.getColumnIndex(Contract.Item.COLUMN_CHECK));
-
-
-                long id = cursor.getLong(cursor.getColumnIndex(Contract.Item.COLUMN_ID));
-
-                Item expense = new Item(title,desc,date,time,cat,mark,check);
-                expense.setId(id);
-                items.add(expense);
-
-            }
-            cursor.close();
-            //checkdb(items);
-
+            displaySort(Contract.Item.COLUMN_TITLE);
 
         }
 
        else if(idmenu == R.id.sortdesc)
         {
 
-            items.clear();
-            if (rootlayout.indexOfChild(initialayout) > -1) {
-                // Remove initial layout if it's previously added
-                rootlayout.removeView(initialayout);
-            }
-            ItemOpenHelper openHelper = ItemOpenHelper.getInstance(getApplicationContext());
-            SQLiteDatabase database = openHelper.getReadableDatabase();
-
-            Cursor cursor = database.query(Contract.Item.TABLE_NAME, null, null, null, null, null, Contract.Item.COLUMN_DESC + " ASC", null);
-
-            while(cursor.moveToNext()){
-                String title = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_TITLE));
-                String desc = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_DESC));
-                String date = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_DATE));
-                String time = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_TIME));
-                String cat= cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_CATEGORY));
-                int mark= cursor.getInt(cursor.getColumnIndex(Contract.Item.COLUMN_MARK));
-                int check = cursor.getInt(cursor.getColumnIndex(Contract.Item.COLUMN_CHECK));
-
-
-                long id = cursor.getLong(cursor.getColumnIndex(Contract.Item.COLUMN_ID));
-
-                Item expense = new Item(title,desc,date,time,cat,mark,check);
-                expense.setId(id);
-                items.add(expense);
-
-            }
-            cursor.close();
-            //checkdb(items);
+            displaySort(Contract.Item.COLUMN_DESC);
 
         }
 
        else  if(idmenu == R.id.sortdate)
         {
-
-            items.clear();
-            if (rootlayout.indexOfChild(initialayout) > -1) {
-                // Remove initial layout if it's previously added
-                rootlayout.removeView(initialayout);
-            }
-            ItemOpenHelper openHelper = ItemOpenHelper.getInstance(getApplicationContext());
-            SQLiteDatabase database = openHelper.getReadableDatabase();
-
-            Cursor cursor = database.query(Contract.Item.TABLE_NAME, null, null, null, null, null, Contract.Item.COLUMN_DATE + " ASC", null);
-
-            while(cursor.moveToNext()){
-                String title = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_TITLE));
-                String desc = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_DESC));
-                String date = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_DATE));
-                String time = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_TIME));
-                String cat= cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_CATEGORY));
-                int mark= cursor.getInt(cursor.getColumnIndex(Contract.Item.COLUMN_MARK));
-                int check = cursor.getInt(cursor.getColumnIndex(Contract.Item.COLUMN_CHECK));
-
-
-                long id = cursor.getLong(cursor.getColumnIndex(Contract.Item.COLUMN_ID));
-
-                Item expense = new Item(title,desc,date,time,cat,mark,check);
-                expense.setId(id);
-                items.add(expense);
-
-            }
-            cursor.close();
-            //checkdb(items);
+            displaySort(Contract.Item.COLUMN_DATE);
 
         }
 
@@ -672,8 +609,46 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
         cursor.close();
         adapter.notifyDataSetChanged();
-
         checkdb(items);
+
+
+    }
+
+    public  void displaySort(String colname)
+    {
+
+        items.clear();
+        if (rootlayout.indexOfChild(initialayout) > -1) {
+            // Remove initial layout if it's previously added
+            rootlayout.removeView(initialayout);
+        }
+        ItemOpenHelper openHelper = ItemOpenHelper.getInstance(getApplicationContext());
+        SQLiteDatabase database = openHelper.getReadableDatabase();
+
+        Cursor cursor = database.query(Contract.Item.TABLE_NAME, null, null, null, null, null, colname + " ASC", null);
+
+        while(cursor.moveToNext()){
+            String title = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_TITLE));
+            String desc = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_DESC));
+            String date = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_DATE));
+            String time = cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_TIME));
+            String cat= cursor.getString(cursor.getColumnIndex(Contract.Item.COLUMN_CATEGORY));
+            int mark= cursor.getInt(cursor.getColumnIndex(Contract.Item.COLUMN_MARK));
+            int check = cursor.getInt(cursor.getColumnIndex(Contract.Item.COLUMN_CHECK));
+
+
+            long id = cursor.getLong(cursor.getColumnIndex(Contract.Item.COLUMN_ID));
+
+            Item expense = new Item(title,desc,date,time,cat,mark,check);
+            expense.setId(id);
+            items.add(expense);
+
+        }
+        cursor.close();
+        adapter.notifyDataSetChanged();
+        checkdb(items);
+
+
     }
 
 

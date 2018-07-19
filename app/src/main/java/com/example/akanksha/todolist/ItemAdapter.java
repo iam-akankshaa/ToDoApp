@@ -57,12 +57,17 @@ public class ItemAdapter extends ArrayAdapter{
         tv4.setText(i.getTime());
         tv5.setText(i.getCategory());
 
-        if(i.getCheck() == 1)
+        if(i.getCheck() == 1) {
             checkBox.setChecked(true);
 
-        if(i.getMark() == 1)
+        }
+
+
+        if(i.getMark() == 1) {
             button.setBackground(getContext().getResources().getDrawable(R.drawable.starblue));
             //button.setBackgroundColor(getContext().getResources().getColor(R.color.my_blue));
+
+        }
 
 
         button.setOnClickListener(new View.OnClickListener() {

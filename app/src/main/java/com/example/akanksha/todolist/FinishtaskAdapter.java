@@ -54,11 +54,20 @@ public class FinishtaskAdapter extends ArrayAdapter{
         tv4.setText(i.getTime());
         tv5.setText(i.getCategory());
 
-        if(i.getCheck() == 1)
+        if(i.getCheck() == 1) {
+
             checkBox.setChecked(true);
 
-        if(i.getMark() == 1)
-            button.setBackground(getContext().getResources().getDrawable(R.drawable.starmark2));
+        }
+
+        if(i.getMark() == 1) {
+
+            button.setBackground(getContext().getResources().getDrawable(R.drawable.starblue));
+
+        }
+
+        checkBox.setEnabled(false);
+        button.setEnabled(false);
 
 
         return  output;

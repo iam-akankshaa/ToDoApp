@@ -13,6 +13,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -25,6 +27,9 @@ public class finishtaskActivity extends AppCompatActivity implements  AdapterVie
     LayoutInflater inflater;
     FinishtaskAdapter adapter;
     Bundle bundle;
+    public static final int FINISH_RESULT_CODE = 1019;
+    FrameLayout rootlayout;
+    LinearLayout initialayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +40,7 @@ public class finishtaskActivity extends AppCompatActivity implements  AdapterVie
 
         l=findViewById(R.id.list);
         items=new ArrayList<>();
+        rootlayout=findViewById(R.id.root);
 
         //inflater= (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE) ;
 
@@ -43,7 +49,7 @@ public class finishtaskActivity extends AppCompatActivity implements  AdapterVie
         l.setAdapter(adapter);
 
         //l.setOnItemClickListener(this);
-        //l.setOnItemLongClickListener(this);
+        l.setOnItemLongClickListener(this);
         Log.d("Main ACtivity","oncreate");
 
         Intent intent = getIntent();
@@ -73,6 +79,7 @@ public class finishtaskActivity extends AppCompatActivity implements  AdapterVie
 
             cursor.close();
             adapter.notifyDataSetChanged();
+            checkdb(items);
 
             Toast.makeText(this,"Finished Tasks Deleted",Toast.LENGTH_LONG).show();
 
@@ -103,7 +110,10 @@ public class finishtaskActivity extends AppCompatActivity implements  AdapterVie
 
                 database.delete(Contract.Item.TABLE_NAME,Contract.Item.COLUMN_ID + " = ?",selectionArgs);
                 items.remove(position);
+
                 adapter.notifyDataSetChanged();
+                Toast.makeText(finishtaskActivity.this,"Task Deleted",Toast.LENGTH_LONG).show();
+                checkdb(items);
 
                 int rcode=(int) id;
 
@@ -112,6 +122,10 @@ public class finishtaskActivity extends AppCompatActivity implements  AdapterVie
                 Intent intent = new Intent(finishtaskActivity.this,NotificationReve.class);
                 PendingIntent pendingIntent =  PendingIntent.getBroadcast(finishtaskActivity.this,rcode,intent,0);
                 alarmManager.cancel(pendingIntent);
+
+
+               // Intent intent1 = new Intent(finishtaskActivity.this,MainActivity.class);
+               // startActivity(intent1);
 
 
             }
@@ -135,6 +149,12 @@ public class finishtaskActivity extends AppCompatActivity implements  AdapterVie
     public void displayAll()
     {
         items.clear();
+
+        if (rootlayout.indexOfChild(initialayout) > -1) {
+            // Remove initial layout if it's previously added
+            rootlayout.removeView(initialayout);
+        }
+
         ItemOpenHelper openHelper = ItemOpenHelper.getInstance(getApplicationContext());
         SQLiteDatabase database = openHelper.getReadableDatabase();
 
@@ -161,7 +181,26 @@ public class finishtaskActivity extends AppCompatActivity implements  AdapterVie
         }
         cursor.close();
         adapter.notifyDataSetChanged();
+        checkdb(items);
 
     }
+
+    public void onBackPressed() {
+
+        setResult(FINISH_RESULT_CODE);
+        finish();
+
+    }
+
+    public void checkdb(ArrayList<Item> items)
+    {
+        if(items.isEmpty())
+        {
+            LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
+            initialayout = (LinearLayout) inflater.inflate(R.layout.finish_initial_layout,rootlayout,false);
+            rootlayout.addView(initialayout);
+        }
+    }
+
 
 }

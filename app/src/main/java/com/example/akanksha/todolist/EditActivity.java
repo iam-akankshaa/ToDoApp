@@ -34,11 +34,13 @@ public class EditActivity extends AppCompatActivity implements AdapterView.OnIte
     String titleExpense,descExpense,dateExpense,timeExpense;
     Bundle bundle;
     public static final int EDIT_EXPENSE_RESULT_CODE = 1013;
+    public static final int EDIT_EXPENSE_NOT_CHANGE_RESULT_CODE = 1015;
     String time;
     String date;
     String title;
     String desc;
     String category;
+    String categoryExpense;
     int mark;
     long id;
     long code;
@@ -267,14 +269,14 @@ public class EditActivity extends AppCompatActivity implements AdapterView.OnIte
 
                 Bundle bundle = new Bundle();
 
-                /*bundle.putString(MainActivity.TITLE, titleExpense);
-                bundle.putString(MainActivity.DESCRIPTION, descExpense);
-                bundle.putString(MainActivity.DATE, dateExpense);
-                bundle.putString(MainActivity.TIME, timeExpense);*/
                 bundle.putLong(MainActivity.ID,id);
                 data.putExtras(bundle);
 
-                setResult(EDIT_EXPENSE_RESULT_CODE,data);
+                if(title.equals(titleExpense) && desc.equals(descExpense) && date.equals(dateExpense) && time.equals(timeExpense) && category.equals(categoryExpense) && mark==markvalue)
+                    setResult(EDIT_EXPENSE_NOT_CHANGE_RESULT_CODE,data);
+                else
+                    setResult(EDIT_EXPENSE_RESULT_CODE,data);
+
                 finish();
 
                 }
@@ -397,7 +399,7 @@ public class EditActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
-         category= categories.get(i);
+         categoryExpense= categories.get(i);
        // textView.setText(c);
 
     }
