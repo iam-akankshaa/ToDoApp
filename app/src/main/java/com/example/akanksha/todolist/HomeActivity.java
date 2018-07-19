@@ -89,7 +89,7 @@ public class HomeActivity extends AppCompatActivity {
         tv5.setText(category);
 
         if(mark == 1)
-            b.setBackground(this.getResources().getDrawable(R.drawable.starblue));
+            b.setBackground(this.getResources().getDrawable(R.drawable.starblue3));
 
 
 

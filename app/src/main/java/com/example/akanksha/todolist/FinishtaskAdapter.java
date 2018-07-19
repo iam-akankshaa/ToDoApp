@@ -62,7 +62,7 @@ public class FinishtaskAdapter extends ArrayAdapter{
 
         if(i.getMark() == 1) {
 
-            button.setBackground(getContext().getResources().getDrawable(R.drawable.starblue));
+            button.setBackground(getContext().getResources().getDrawable(R.drawable.starblue3));
 
         }
 

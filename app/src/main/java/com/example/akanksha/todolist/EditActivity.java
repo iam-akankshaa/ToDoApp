@@ -220,7 +220,7 @@ public class EditActivity extends AppCompatActivity implements AdapterView.OnIte
                    database.update(Contract.Item.TABLE_NAME,contentValues,Contract.Item.COLUMN_ID + " = ? ",selectionArgs);
 
 
-                if( !time.equals(timeExpense) || !date.equals(dateExpense) ) {
+                if( !expense.getTime().equals(time) || !expense.getDate().equals(date) ) {
 
                     Bundle bundle1 = new Bundle();
 
@@ -235,15 +235,12 @@ public class EditActivity extends AppCompatActivity implements AdapterView.OnIte
                     int r = rcode + 100;
                     Intent intent1 = new Intent(this, NotificationReve.class);
                     bundle1.putLong(MainActivity.ID, rcode);
-                   /* bundle1.putString(MainActivity.TITLE, titleExpense);
-                    bundle1.putString(MainActivity.DESCRIPTION, descExpense);
-                    bundle1.putString(MainActivity.DATE, dateExpense);
-                    bundle1.putString(MainActivity.TIME, timeExpense);*/
+
                     intent1.putExtras(bundle1);
                     PendingIntent pendingIntent1 = PendingIntent.getBroadcast(this, r, intent1, 0);
 
-                    String[] d = date.split("-");
-                    String[] t = time.split(":");
+                    String[] d = expense.getDate().split("-");
+                    String[] t = expense.getTime().split(":");
 
                     int yr = Integer.parseInt(d[2]);
                     int mon = Integer.parseInt(d[1]);

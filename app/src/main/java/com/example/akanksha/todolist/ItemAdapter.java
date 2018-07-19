@@ -64,7 +64,7 @@ public class ItemAdapter extends ArrayAdapter{
 
 
         if(i.getMark() == 1) {
-            button.setBackground(getContext().getResources().getDrawable(R.drawable.starblue));
+            button.setBackground(getContext().getResources().getDrawable(R.drawable.starblue3));
             //button.setBackgroundColor(getContext().getResources().getColor(R.color.my_blue));
 
         }

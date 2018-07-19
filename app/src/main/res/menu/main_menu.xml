@@ -11,7 +11,7 @@
         <menu>
 
             <item android:id="@+id/all"   android:icon="@drawable/alltask" app:showAsAction="always"/>
-            <item android:id="@+id/important" android:icon="@drawable/starblue" app:showAsAction="always"/>
+            <item android:id="@+id/important" android:icon="@drawable/starblue3" app:showAsAction="always"/>
 
             <item android:id="@+id/dflt" android:icon="@drawable/defltcat"  app:showAsAction="always"/>
             <item android:id="@+id/shopping"  android:icon="@drawable/shopping" app:showAsAction="always"/>
@@ -46,6 +46,10 @@
         </menu>
 
     </item>
+
+    <item
+        android:id="@+id/sound"
+        android:title="Set Sound"/>
 
     <item
             android:id="@+id/feedback"

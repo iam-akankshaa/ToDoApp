@@ -6,8 +6,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -51,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     FrameLayout rootlayout;
     LinearLayout initialayout;
+    String selectedRingtone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -397,6 +400,28 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         }
 
+        else if (requestCode == 0000)
+        {
+
+            Uri uri = null;
+            if (data != null) {
+                uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+            }
+
+            if (uri != null)
+            {
+                this.selectedRingtone = uri.toString();
+                SharedPreferences prefs = getSharedPreferences("sound",Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString("sound_uri", selectedRingtone);
+                editor.apply();
+            }
+            else
+            {
+                this.selectedRingtone = null;
+            }
+        }
+
 
     }
 
@@ -545,6 +570,21 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             displaySort(Contract.Item.COLUMN_DATE);
 
         }
+
+        else if(idmenu == R.id.sound){
+
+            SharedPreferences prefs_sound = this.getSharedPreferences("sound",Context.MODE_PRIVATE);
+            String sound = prefs_sound.getString("sound_uri", RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString());
+            Uri alarmSound = Uri.parse(sound);
+            Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM);
+            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select sound");
+            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, alarmSound);
+            this.startActivityForResult(intent, 0000);
+
+        }
+
+
 
         else if(idmenu == R.id.feedback)
         {
