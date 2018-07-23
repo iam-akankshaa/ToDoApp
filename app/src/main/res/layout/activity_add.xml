@@ -7,6 +7,26 @@
     android:orientation="vertical"
     tools:context=".AddActivity">
 
+
+    <android.support.v7.widget.Toolbar
+
+        android:id="@+id/toolbaradd"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorAccent"
+        android:theme="@style/AppTheme.AppBarOverlay" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="22dp"
+            android:text="New Task"
+            android:textColor="#ffffff"
+            />
+
+    </android.support.v7.widget.Toolbar>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

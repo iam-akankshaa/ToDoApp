@@ -6,15 +6,19 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.BitmapFactory;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import static android.content.Context.MODE_PRIVATE;
 import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class NotificationReve extends BroadcastReceiver {
@@ -26,6 +30,11 @@ public class NotificationReve extends BroadcastReceiver {
         //throw new UnsupportedOperationException("Not yet implemented");
 
         Toast.makeText(context,"Alarm",Toast.LENGTH_LONG).show();
+
+
+        SharedPreferences pref_sound = context.getSharedPreferences("sound", MODE_PRIVATE);
+        String sound = pref_sound.getString("sound_uri", RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString());
+        Uri alarmSound = Uri.parse(sound);
 
         NotificationManager manager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
 
@@ -80,6 +89,14 @@ public class NotificationReve extends BroadcastReceiver {
         builder.setAutoCancel(true);
         builder.setVibrate(new long[]{250,250,250,250});
         //builder.setColor(context.getResources().getColor(R.color.colorPrimaryDark));
+
+        if(alarmSound==null) {
+            Uri uriSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);//Set sound
+            builder.setSound(uriSound);
+        }
+        else {
+            builder.setSound(alarmSound);
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder.setSmallIcon(R.drawable.todoicon);
